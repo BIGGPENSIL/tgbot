@@ -20,7 +20,7 @@ ADMIN_ID = int(os.getenv('ADMIN_ID'))
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# Состояния
+# Состояния (фамилии больше нет)
 CHOICE, NAME, PHONE, TRANSPORT, MODEL, YEAR, MILEAGE = range(7)
 
 # ====================== ОБЩАЯ ОТМЕНА ======================
@@ -35,7 +35,7 @@ async def cancel(update: Update, context) -> int:
 # ====================== ШАГИ БОТА ======================
 async def start(update: Update, context) -> int:
     await update.message.reply_text(
-        'Привет! Добро пожаловать в бота SHUNSOKU. Выберите опцию:',
+        'Привет! Добро пожаловать в бота **SHUNSOKU**. Выберите опцию:',
         reply_markup=ReplyKeyboardMarkup(
             [['Консультация', 'Заказ'], ['Отмена']],
             one_time_keyboard=True,
@@ -57,11 +57,12 @@ async def choice(update: Update, context) -> int:
     return NAME
 
 
-async def surname(update: Update, context) -> int:
+async def name(update: Update, context) -> int:
     if update.message.text.strip() == 'Отмена':
         return await cancel(update, context)
     
-    context.user_data['surname'] = update.message.text
+    context.user_data['name'] = update.message.text
+    # Сразу переходим к телефону (фамилии больше нет)
     await update.message.reply_text(
         'Введите ваш номер телефона (в формате +7XXXXXXXXXX или 8XXXXXXXXXX):',
         reply_markup=ReplyKeyboardMarkup([['Отмена']], resize_keyboard=True)
@@ -106,7 +107,7 @@ async def transport(update: Update, context) -> int:
     
     context.user_data['transport'] = update.message.text
     await update.message.reply_text(
-        'Введите марку/модель транспорта:',
+        'Введите модель транспорта:',
         reply_markup=ReplyKeyboardMarkup([['Отмена']], resize_keyboard=True)
     )
     return MODEL
@@ -130,13 +131,13 @@ async def year(update: Update, context) -> int:
     
     try:
         y = int(update.message.text.strip())
-        if not (2000 <= y <= 2026):
+        if not (1950 <= y <= 2030):
             raise ValueError
         context.user_data['year'] = str(y)
     except:
         await update.message.reply_text(
             '❌ Неверный год!\n\n'
-            'Введите число от 2000 до 2026:'
+            'Введите число от 1950 до 2030:'
         )
         return YEAR
     
@@ -211,5 +212,4 @@ def main() -> None:
 
 
 if __name__ == '__main__':
-
     main()
