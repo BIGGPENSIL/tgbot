@@ -102,7 +102,7 @@ async def phone(update: Update, context) -> int:
     await update.message.reply_text(
         'Выберите тип транспорта:',
         reply_markup=ReplyKeyboardMarkup(
-            [['Мотоцикл', 'Машина'], ['Отмена']],
+            [['Мотоцикл', 'Автомобиль'], ['Отмена']],
             one_time_keyboard=True,
             resize_keyboard=True
         )
@@ -116,7 +116,7 @@ async def transport(update: Update, context) -> int:
     
     context.user_data['transport'] = update.message.text
     await update.message.reply_text(
-        'Введите модель транспорта:',
+        'Введите марку\модель транспорта:',
         reply_markup=ReplyKeyboardMarkup([['Отмена']], resize_keyboard=True)
     )
     return MODEL
@@ -128,7 +128,7 @@ async def model(update: Update, context) -> int:
     
     context.user_data['model'] = update.message.text
     await update.message.reply_text(
-        'Введите год выпуска (1950–2030):',
+        'Введите год выпуска (2000–2026):',
         reply_markup=ReplyKeyboardMarkup([['Отмена']], resize_keyboard=True)
     )
     return YEAR
@@ -140,13 +140,13 @@ async def year(update: Update, context) -> int:
     
     try:
         y = int(update.message.text.strip())
-        if not (1950 <= y <= 2030):
+        if not (2000 <= y <= 2026):
             raise ValueError
         context.user_data['year'] = str(y)
     except:
         await update.message.reply_text(
             '❌ Неверный год!\n\n'
-            'Введите число от 1950 до 2030:'
+            'Введите число от 2000 до 2026:'
         )
         return YEAR
     
@@ -222,5 +222,6 @@ def main() -> None:
 
 if __name__ == '__main__':
     main()
+
 
 
