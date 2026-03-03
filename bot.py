@@ -21,7 +21,7 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
 logger = logging.getLogger(__name__)
 
 # Состояния
-CHOICE, NAME, SURNAME, PHONE, TRANSPORT, MODEL, YEAR, MILEAGE = range(8)
+CHOICE, NAME, PHONE, TRANSPORT, MODEL, YEAR, MILEAGE = range(7)
 
 # ====================== ОБЩАЯ ОТМЕНА ======================
 async def cancel(update: Update, context) -> int:
@@ -55,18 +55,6 @@ async def choice(update: Update, context) -> int:
         reply_markup=ReplyKeyboardMarkup([['Отмена']], resize_keyboard=True)
     )
     return NAME
-
-
-async def name(update: Update, context) -> int:
-    if update.message.text.strip() == 'Отмена':
-        return await cancel(update, context)
-    
-    context.user_data['name'] = update.message.text
-    await update.message.reply_text(
-        'Теперь введите вашу фамилию:',
-        reply_markup=ReplyKeyboardMarkup([['Отмена']], resize_keyboard=True)
-    )
-    return SURNAME
 
 
 async def surname(update: Update, context) -> int:
@@ -118,7 +106,7 @@ async def transport(update: Update, context) -> int:
     
     context.user_data['transport'] = update.message.text
     await update.message.reply_text(
-        'Введите модель транспорта:',
+        'Введите марку/модель транспорта:',
         reply_markup=ReplyKeyboardMarkup([['Отмена']], resize_keyboard=True)
     )
     return MODEL
@@ -142,13 +130,13 @@ async def year(update: Update, context) -> int:
     
     try:
         y = int(update.message.text.strip())
-        if not (1950 <= y <= 2030):
+        if not (2000 <= y <= 2026):
             raise ValueError
         context.user_data['year'] = str(y)
     except:
         await update.message.reply_text(
             '❌ Неверный год!\n\n'
-            'Введите число от 1950 до 2030:'
+            'Введите число от 2000 до 2026:'
         )
         return YEAR
     
@@ -181,7 +169,6 @@ async def mileage(update: Update, context) -> int:
         f"Новый запрос:\n"
         f"Опция: {data['choice']}\n"
         f"Имя: {data['name']}\n"
-        f"Фамилия: {data['surname']}\n"
         f"Телефон: {data['phone']}\n"
         f"Транспорт: {data['transport']}\n"
         f"Модель: {data['model']}\n"
@@ -210,7 +197,6 @@ def main() -> None:
         states={
             CHOICE:    [MessageHandler(filters.TEXT & ~filters.COMMAND, choice)],
             NAME:      [MessageHandler(filters.TEXT & ~filters.COMMAND, name)],
-            SURNAME:   [MessageHandler(filters.TEXT & ~filters.COMMAND, surname)],
             PHONE:     [MessageHandler(filters.TEXT & ~filters.COMMAND, phone)],
             TRANSPORT: [MessageHandler(filters.TEXT & ~filters.COMMAND, transport)],
             MODEL:     [MessageHandler(filters.TEXT & ~filters.COMMAND, model)],
@@ -225,4 +211,5 @@ def main() -> None:
 
 
 if __name__ == '__main__':
+
     main()
