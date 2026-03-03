@@ -1,6 +1,5 @@
 import logging
 import os
-import re
 
 from dotenv import load_dotenv
 from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove, Update
@@ -12,10 +11,19 @@ from telegram.ext import (
     ConversationHandler,
 )
 
-# ====================== НАСТРОЙКИ ======================
-load_dotenv()
+# ====================== ЗАГРУЗКА ПЕРЕМЕННЫХ ======================
+load_dotenv()  # работает локально
+
 BOT_TOKEN = os.getenv('BOT_TOKEN')
-ADMIN_ID = int(os.getenv('ADMIN_ID'))
+ADMIN_ID = os.getenv('ADMIN_ID')
+
+# Защита от ошибки
+if not BOT_TOKEN:
+    raise ValueError("❌ BOT_TOKEN не найден! Добавь его в Variables на хостинге (Railway/Bothost).")
+if not ADMIN_ID:
+    raise ValueError("❌ ADMIN_ID не найден! Добавь его в Variables на хостинге.")
+
+ADMIN_ID = int(ADMIN_ID)  # теперь безопасно
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -213,3 +221,4 @@ def main() -> None:
 
 if __name__ == '__main__':
     main()
+
